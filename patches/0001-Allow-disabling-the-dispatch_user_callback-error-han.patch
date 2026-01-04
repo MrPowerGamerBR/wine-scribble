@@ -1,0 +1,54 @@
+From 57501fcf62fcf04ca3642d3d0c37290c8ebb407d Mon Sep 17 00:00:00 2001
+From: MrPowerGamerBR <git@mrpowergamerbr.com>
+Date: Sun, 4 Jan 2026 02:42:24 -0300
+Subject: Allow disabling the dispatch_user_callback error handler
+
+Fixes issues in Microsoft Flight Simulator 98
+---
+ dlls/ntdll/exception.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/dlls/ntdll/exception.c b/dlls/ntdll/exception.c
+index 691781017a2..50a8c02927d 100644
+--- a/dlls/ntdll/exception.c
++++ b/dlls/ntdll/exception.c
+@@ -285,18 +285,29 @@ EXCEPTION_DISPOSITION WINAPI user_callback_handler( EXCEPTION_RECORD *record, vo
+ NTSTATUS WINAPI dispatch_user_callback( void *args, ULONG len, ULONG id )
+ {
+     NTSTATUS status;
++    static int disable_error_handling = -1;
+ 
+-    __TRY
++    if (disable_error_handling == -1)
+     {
++        const char *val = getenv("SCRIBBLE_DISABLE_USER_CALLBACK_ERROR_HANDLING");
++        disable_error_handling = (val && !strcmp(val, "1"));
++    }
++    if (disable_error_handling) {
+         KERNEL_CALLBACK_PROC func = NtCurrentTeb()->Peb->KernelCallbackTable[id];
+         status = func( args, len );
++    } else {
++        __TRY
++        {
++            KERNEL_CALLBACK_PROC func = NtCurrentTeb()->Peb->KernelCallbackTable[id];
++            status = func( args, len );
++        }
++        __EXCEPT_ALL
++        {
++            status = GetExceptionCode();
++            ERR( "ignoring exception %lx\n", status );
++        }
++        __ENDTRY
+     }
+-    __EXCEPT_ALL
+-    {
+-        status = GetExceptionCode();
+-        ERR( "ignoring exception %lx\n", status );
+-    }
+-    __ENDTRY
+     return status;
+ }
+ 
+-- 
+2.52.0
+
