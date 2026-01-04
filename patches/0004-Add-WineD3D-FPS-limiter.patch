@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrPowerGamerBR <git@mrpowergamerbr.com>
+Date: Sun, 4 Jan 2026 15:46:52 -0300
+Subject: Add WineD3D FPS limiter
+
+Useful when the game syncs the physics to the game FPS
+
+Can be controlled via the WINE_D3D_CONFIG setting (WINE_D3D_CONFIG="FPSLimit=15") or via the \"FPSLimit\" registry key
+---
+ dlls/wined3d/cs.c              | 14 ++++++++++++++
+ dlls/wined3d/wined3d_main.c    |  3 +++
+ dlls/wined3d/wined3d_private.h |  1 +
+ 3 files changed, 18 insertions(+)
+
+diff --git a/dlls/wined3d/cs.c b/dlls/wined3d/cs.c
+index add8f8f174e..8bcb1ad5bcf 100644
+--- a/dlls/wined3d/cs.c
++++ b/dlls/wined3d/cs.c
+@@ -723,6 +723,20 @@ static void wined3d_cs_exec_present(struct wined3d_cs *cs, const void *data)
+             wined3d_rendertarget_view_validate_location(dsv, WINED3D_LOCATION_DISCARDED);
+     }
+ 
++    if (wined3d_settings.fps_limit != UINT_MAX)
++    {
++        QueryPerformanceCounter(&time);
++        if (swapchain->last_present_time.QuadPart)
++        {
++            elapsed_time = time.QuadPart - swapchain->last_present_time.QuadPart;
++            if (elapsed_time < freq.QuadPart / wined3d_settings.fps_limit)
++            {
++                Sleep((freq.QuadPart / wined3d_settings.fps_limit - elapsed_time) * 1000 / freq.QuadPart);
++                QueryPerformanceCounter(&time);
++            }
++        }
++        swapchain->last_present_time = time;
++    }
+     if (TRACE_ON(frametime))
+     {
+         QueryPerformanceCounter(&time);
+diff --git a/dlls/wined3d/wined3d_main.c b/dlls/wined3d/wined3d_main.c
+index 91d8dd567ff..87e435ae5eb 100644
+--- a/dlls/wined3d/wined3d_main.c
++++ b/dlls/wined3d/wined3d_main.c
+@@ -129,6 +129,7 @@ struct wined3d_settings wined3d_settings =
+     .max_sm_cs = UINT_MAX,
+     .renderer = WINED3D_RENDERER_AUTO,
+     .shader_backend = WINED3D_SHADER_BACKEND_AUTO,
++    .fps_limit = UINT_MAX,
+ };
+ 
+ enum wined3d_renderer CDECL wined3d_get_renderer(void)
+@@ -344,6 +345,8 @@ static BOOL wined3d_dll_init(HINSTANCE hInstDLL)
+     {
+         if (!get_config_key_dword(hkey, appkey, env, "csmt", &wined3d_settings.cs_multithreaded))
+             ERR_(winediag)("Setting multithreaded command stream to %#x.\n", wined3d_settings.cs_multithreaded);
++        if (!get_config_key_dword(hkey, appkey, env, "FPSLimit", &wined3d_settings.fps_limit))
++            ERR_(winediag)("Setting FPS limit to %u.\n", wined3d_settings.fps_limit);
+         if (!get_config_key_dword(hkey, appkey, env, "MaxVersionGL", &tmpvalue))
+         {
+             ERR_(winediag)("Setting maximum allowed wined3d GL version to %u.%u.\n",
+diff --git a/dlls/wined3d/wined3d_private.h b/dlls/wined3d/wined3d_private.h
+index 934239e624f..1d795231a82 100644
+--- a/dlls/wined3d/wined3d_private.h
++++ b/dlls/wined3d/wined3d_private.h
+@@ -491,6 +491,7 @@ struct wined3d_settings
+     bool check_float_constants;
+     bool cb_access_map_w;
+     bool ffp_hlsl;
++    unsigned int fps_limit;
+ };
+ 
+ extern struct wined3d_settings wined3d_settings;
+-- 
+2.52.0
+

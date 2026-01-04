@@ -1,4 +1,4 @@
-From f5c2bae4ab571a088bd5997bd875203bf74f3cab Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrPowerGamerBR <git@mrpowergamerbr.com>
 Date: Sun, 4 Jan 2026 02:51:27 -0300
 Subject: Gracefully handle zero size palette resizes

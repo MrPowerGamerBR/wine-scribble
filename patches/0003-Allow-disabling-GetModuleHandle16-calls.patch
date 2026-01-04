@@ -1,4 +1,4 @@
-From 968a2da40f81eb4b991e61d386bf5272c051b5e4 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrPowerGamerBR <git@mrpowergamerbr.com>
 Date: Sun, 4 Jan 2026 13:43:12 -0300
 Subject: Allow disabling GetModuleHandle16 calls

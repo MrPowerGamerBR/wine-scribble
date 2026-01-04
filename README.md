@@ -44,6 +44,13 @@ When enabled, Wine will return `0` to all `GetModuleHandle16` calls.
 
 **When to use:** If an application is taking too long to process/load something and you notice that, when running the game with `+module`, there is some `GetModuleHandle16` calls.
 
+### WineD3D FPS Limiter
+
+Some games tie physics/logic to the FPS. While other DX wrappers (DXVK, D7VK, dxwrapper, etc) have their own FPS limiter, WineD3D doesn't, and that's sad when you have a game that runs well enough on WineD3D but doesn't work on other translation layers.
+
+You can use it with `WINE_D3D_CONFIG="FPSLimit=30"`, or you can set the registry key `HKEY_CURRENT_USER -> Software -> Wine -> Direct3D -> FPSLimit`
+
+
 ## Patched Games
 
 ### Microsoft Flight Simulator 98
@@ -55,3 +62,5 @@ When enabled, Wine will return `0` to all `GetModuleHandle16` calls.
 Vanilla Wine has a bug that causes Monster Truck Madness 2 to crash with a "double free detected" due to the game trying to resize a palette to zero entries and then delete it.
 
 * `SCRIBBLE_DISABLE_WIN16_MODULE_HANDLES=1`: Fixes the game taking a long time to load and end races
+* `WINE_D3D_CONFIG="FPSLimit=30"`: If you don't limit the FPS, the game AI and physics get all wonky (see: http://www.mtm2.com/~mtmg/dxtory.html)
+  * Another alternative is to use nGlide + DXVK (nGlide for 3dfx acceleration, DXVK to limit the FPS)
