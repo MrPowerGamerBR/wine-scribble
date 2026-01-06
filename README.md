@@ -14,6 +14,7 @@ You should NOT use `wine-scribble` as your main Wine install, you should only us
 2. Create a folder named `build32`
 3. Inside the `build32` folder, run `../wine/configure --prefix=/opt/wine-scribble --with-x --without-mingw CFLAGS="-m32" LDFLAGS="-m32"`
 4. Use `make -j$(nproc) && sudo make install`
+  * If you already have a install on `/opt/wine-scribble`, don't forget to `sudo rm -rf /opt/wine-scribble`! Sometimes Wine may crash if you attempt to overwrite an already existing installation.
 5. The installed Wine will be in `/opt/wine-scribble`
 
 ## Features
@@ -30,26 +31,11 @@ When enabled, removes the `try .. except` handler from the `dispatch_user_callba
 
 **When to use:** If an application is behaving erratically after the SEH logs that it ignored a exception. Keep in mind that if the game does not handle the exception, it will crash!
 
-### Gracefully handle zero-sized palette resizes
-
-If an application tries to resize a palette to zero, Wine calls `realloc` and, because calling `realloc` with zero is undefined behavior, the behavior seems that it acts like it is a call to `free`.
-
-If the application then tries to delete the previously resized to zero palette, the application crashes with `double free detected`.
-
-**When to use:** If a game is crashing with "double free detected" when deleting palettes.
-
-### Disable `GetModuleHandle16` handles
-
-When enabled, Wine will return `0` to all `GetModuleHandle16` calls.
-
-**When to use:** If an application is taking too long to process/load something and you notice that, when running the game with `+module`, there is some `GetModuleHandle16` calls.
-
 ### WineD3D FPS Limiter
 
 Some games tie physics/logic to the FPS. While other DX wrappers (DXVK, D7VK, dxwrapper, etc) have their own FPS limiter, WineD3D doesn't, and that's sad when you have a game that runs well enough on WineD3D but doesn't work on other translation layers.
 
 You can use it with `WINE_D3D_CONFIG="FPSLimit=30"`, or you can set the registry key `HKEY_CURRENT_USER -> Software -> Wine -> Direct3D -> FPSLimit`
-
 
 ## Patched Games
 
@@ -59,8 +45,7 @@ You can use it with `WINE_D3D_CONFIG="FPSLimit=30"`, or you can set the registry
 
 ### Monster Truck Madness 2
 
-Vanilla Wine has a bug that causes Monster Truck Madness 2 to crash with a "double free detected" due to the game trying to resize a palette to zero entries and then delete it.
+`wine-scribble` did have some specific patches to fix Monster Truck Madness 2, but they were all fixed in upstream Wine (yayy!).
 
-* `SCRIBBLE_DISABLE_WIN16_MODULE_HANDLES=1`: Fixes the game taking a long time to load and end races
 * `WINE_D3D_CONFIG="FPSLimit=30"`: If you don't limit the FPS, the game AI and physics get all wonky (see: http://www.mtm2.com/~mtmg/dxtory.html)
   * Another alternative is to use nGlide + DXVK (nGlide for 3dfx acceleration, DXVK to limit the FPS)
