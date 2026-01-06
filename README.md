@@ -37,6 +37,12 @@ Some games tie physics/logic to the FPS. While other DX wrappers (DXVK, D7VK, dx
 
 You can use it with `WINE_D3D_CONFIG="FPSLimit=30"`, or you can set the registry key `HKEY_CURRENT_USER -> Software -> Wine -> Direct3D -> FPSLimit`
 
+### Return S_OK when calling enumwiadevinfo_GetCount even though it is a stub
+
+On default Wine, Sony Vegas 9 crashes on startup because of a `enumwiadevinfo_GetCount` call. The `enumwiadevinfo_GetCount` is marked as a stub and, because it is a stub, returns `E_NOTIMPL`.
+
+`wine-scribble` patches that by making `enumwiadevinfo_GetCount` to return `S_OK`, which fixes the crash. Of course, any WIA functions won't work.
+
 ## Patched Games
 
 ### Microsoft Flight Simulator 98
@@ -49,3 +55,4 @@ You can use it with `WINE_D3D_CONFIG="FPSLimit=30"`, or you can set the registry
 
 * `WINE_D3D_CONFIG="FPSLimit=30"`: If you don't limit the FPS, the game AI and physics get all wonky (see: http://www.mtm2.com/~mtmg/dxtory.html)
   * Another alternative is to use nGlide + DXVK (nGlide for 3dfx acceleration, DXVK to limit the FPS)
+

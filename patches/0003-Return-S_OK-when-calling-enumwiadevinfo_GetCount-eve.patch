@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrPowerGamerBR <git@mrpowergamerbr.com>
+Date: Tue, 6 Jan 2026 17:25:51 -0300
+Subject: Return S_OK when calling enumwiadevinfo_GetCount even though it is a
+ stub
+
+---
+ dlls/wiaservc/wiadevmgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dlls/wiaservc/wiadevmgr.c b/dlls/wiaservc/wiadevmgr.c
+index e0156b7f5a2..d359f4e6c37 100644
+--- a/dlls/wiaservc/wiadevmgr.c
++++ b/dlls/wiaservc/wiadevmgr.c
+@@ -127,7 +127,7 @@ static HRESULT WINAPI enumwiadevinfo_GetCount(IEnumWIA_DEV_INFO *iface, ULONG *c
+     FIXME("(%p, %p): stub\n", This, count);
+ 
+     *count = 0;
+-    return E_NOTIMPL;
++    return S_OK;
+ }
+ 
+ static const IEnumWIA_DEV_INFOVtbl EnumWIA_DEV_INFOVtbl =
+-- 
+2.52.0
+
