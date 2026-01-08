@@ -5,14 +5,14 @@ Subject: Allow disabling the dispatch_user_callback error handler
 
 Fixes issues in Microsoft Flight Simulator 98
 ---
- dlls/ntdll/exception.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ dlls/ntdll/exception.c | 35 ++++++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 7 deletions(-)
 
 diff --git a/dlls/ntdll/exception.c b/dlls/ntdll/exception.c
-index 691781017a2..50a8c02927d 100644
+index 691781017a2..93520d39d98 100644
 --- a/dlls/ntdll/exception.c
 +++ b/dlls/ntdll/exception.c
-@@ -285,18 +285,29 @@ EXCEPTION_DISPOSITION WINAPI user_callback_handler( EXCEPTION_RECORD *record, vo
+@@ -285,18 +285,39 @@ EXCEPTION_DISPOSITION WINAPI user_callback_handler( EXCEPTION_RECORD *record, vo
  NTSTATUS WINAPI dispatch_user_callback( void *args, ULONG len, ULONG id )
  {
      NTSTATUS status;
@@ -21,8 +21,18 @@ index 691781017a2..50a8c02927d 100644
 -    __TRY
 +    if (disable_error_handling == -1)
      {
-+        const char *val = getenv("SCRIBBLE_DISABLE_USER_CALLBACK_ERROR_HANDLING");
-+        disable_error_handling = (val && !strcmp(val, "1"));
++        UNICODE_STRING var_name;
++        UNICODE_STRING var_value;
++        WCHAR buffer[4];
++
++        RtlInitUnicodeString(&var_name, L"SCRIBBLE_DISABLE_USER_CALLBACK_ERROR_HANDLING");
++        var_value.Buffer = buffer;
++        var_value.MaximumLength = sizeof(buffer);
++        var_value.Length = 0;
++
++        disable_error_handling = (RtlQueryEnvironmentVariable_U(NULL, &var_name, &var_value) == STATUS_SUCCESS
++                                  && var_value.Length >= sizeof(WCHAR)
++                                  && buffer[0] == L'1');
 +    }
 +    if (disable_error_handling) {
          KERNEL_CALLBACK_PROC func = NtCurrentTeb()->Peb->KernelCallbackTable[id];
