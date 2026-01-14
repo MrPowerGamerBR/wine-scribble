@@ -26,7 +26,7 @@ jobs:
 
       - name: Compile
         run: |
-          bash build_win32.sh
+          bash build_wine32.sh
 
       - uses: actions/upload-artifact@v4
         name: "Upload"
