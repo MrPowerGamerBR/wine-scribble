@@ -34,8 +34,12 @@ RUN pacman -S --noconfirm \
     lib32-fontconfig \
     lib32-krb5 \
     lib32-libxrender \
+    lib32-vulkan-radeon \
     wayland-protocols \
     samba
+
+# Honestly, I'm not sure WHICH library is needed to have vulkan support in Wine
+# So we just bring "lib32-vulkan-radeon" which does the job
 
 # Missing dependencies:
 # lib32-libsane
