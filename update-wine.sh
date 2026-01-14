@@ -28,7 +28,7 @@ if bash update.sh; then
     echo "Wine version: $WINE_VERSION"
 
     git add scribble_vars.sh
-    COMMIT_MESSAGE="Updated Wine ($LATEST_COMMIT_SHORT / $WINE_VERSION)"
+    COMMIT_MESSAGE="Update Wine ($LATEST_COMMIT_SHORT / $WINE_VERSION)"
 
     git -c user.name="Loritta Morenitta" -c user.email="47356322+LorittaMorenitta@users.noreply.github.com" commit -m "$COMMIT_MESSAGE" -m "This is an automated commit!"
 
