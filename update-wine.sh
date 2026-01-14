@@ -30,10 +30,7 @@ if bash update.sh; then
     git add scribble_vars.sh
     COMMIT_MESSAGE="Updated Wine ($LATEST_COMMIT_SHORT / $WINE_VERSION)"
 
-    git config user.name "Loritta Morenitta"
-    git config user.email 47356322+LorittaMorenitta@users.noreply.github.com
-
-    git commit -m "$COMMIT_MESSAGE" -m "This is an automated commit!"
+    git -c user.name="Loritta Morenitta" -c user.email="47356322+LorittaMorenitta@users.noreply.github.com" commit -m "$COMMIT_MESSAGE" -m "This is an automated commit!"
 
     if [ -n "${GITHUB_TOKEN:-}" ]; then
         ORIGIN_URL=$(git config --get remote.origin.url | sed 's|https://||')
