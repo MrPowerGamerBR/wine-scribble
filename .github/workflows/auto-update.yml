@@ -1,0 +1,14 @@
+name: Automatically update Wine commit hash
+env:
+  GITHUB_TOKEN: "${{ secrets.LORITTA_PAT }}"
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for Updates
+        run: |
+          bash update-wine.sh
