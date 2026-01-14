@@ -1,0 +1,35 @@
+name: Build Wine Scribble (x86)
+
+# Controls when the action will run. Triggers the workflow on push to the "cinnamon" branch.
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_USERNAME: "${{ github.actor }}"
+  DOCKER_PASSWORD: "${{ secrets.GITHUB_TOKEN }}"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Compile
+        run: |
+          bash build_win32.sh
+
+      - uses: actions/upload-artifact@v4
+        name: "Upload"
+        with:
+          name: wine-scribble-x86
+          path: "output32/*"
