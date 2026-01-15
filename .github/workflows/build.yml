@@ -1,4 +1,4 @@
-name: Build Wine Scribble (x86)
+name: Build Wine Scribble
 
 # Controls when the action will run. Triggers the workflow on push to the "cinnamon" branch.
 on:
@@ -29,13 +29,13 @@ jobs:
           bash build-wine-docker.sh
 
       - uses: actions/upload-artifact@v4
-        name: "Upload Scribble x86"
+        name: "Upload Scribble (Wine32)"
         with:
           name: wine-scribble-x86
-          path: "output32/*"
+          path: "output/wine32/*"
 
       - uses: actions/upload-artifact@v4
-        name: "Upload Scribble WoW64"
+        name: "Upload Scribble (Wine WoW64)"
         with:
           name: wine-scribble-amd64-wow64
-          path: "outputwow64/*"
+          path: "output/wine-wow64/*"
