@@ -26,10 +26,16 @@ jobs:
 
       - name: Compile
         run: |
-          bash build_wine32.sh
+          bash build-wine-docker.sh
 
       - uses: actions/upload-artifact@v4
-        name: "Upload"
+        name: "Upload Scribble x86"
         with:
           name: wine-scribble-x86
           path: "output32/*"
+
+      - uses: actions/upload-artifact@v4
+        name: "Upload Scribble WoW64"
+        with:
+          name: wine-scribble-amd64-wow64
+          path: "outputwow64/*"
