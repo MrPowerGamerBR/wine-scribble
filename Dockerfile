@@ -67,7 +67,7 @@ USER root
 WORKDIR /root
 
 ADD patches /root/patches/
-COPY update.sh scribble_vars.sh rebuild_patches.sh /root/
+COPY update.sh scribble_vars.sh rebuild_patches.sh build-wine.sh build-wine32.sh build-wine-wow64.sh /root/
 
 # Command to run
 CMD ["bash"]
