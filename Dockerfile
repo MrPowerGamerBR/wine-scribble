@@ -6,6 +6,8 @@ RUN pacman -S --noconfirm \
     git \
     gcc \
     make \
+    mingw-w64-gcc \
+    ccache \
     lib32-libx11 \
     lib32-freetype2 \
     lib32-wayland \
