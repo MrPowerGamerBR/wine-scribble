@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+export GIT_AUTHOR_NAME="Loritta Morenitta"
+export GIT_AUTHOR_EMAIL="47356322+LorittaMorenitta@users.noreply.github.com"
+export GIT_COMMITTER_NAME="Loritta Morenitta"
+export GIT_COMMITTER_EMAIL="47356322+LorittaMorenitta@users.noreply.github.com"
+
 if [ ! -d "wine" ]; then
   git clone https://github.com/wine-mirror/wine wine
 fi
@@ -30,7 +35,7 @@ if bash update.sh; then
     git add scribble_vars.sh
     COMMIT_MESSAGE="Update Wine ($LATEST_COMMIT_SHORT / $WINE_VERSION)"
 
-    git -c user.name="Loritta Morenitta" -c user.email="47356322+LorittaMorenitta@users.noreply.github.com" commit -m "$COMMIT_MESSAGE" -m "This is an automated commit!"
+    git commit -m "$COMMIT_MESSAGE" -m "This is an automated commit!"
 
     if [ -n "${GITHUB_TOKEN:-}" ]; then
         ORIGIN_URL=$(git config --get remote.origin.url | sed 's|https://||')
